@@ -5,6 +5,7 @@ import yamlconf
 
 from .token import Token
 
+import Wikitext
 
 class Tokenizer:
     """
@@ -55,6 +56,38 @@ class RegexTokenizer(Tokenizer):
                 token = tokens[value]
             except KeyError:
                 type = match.lastgroup
+                token = token_class(value, type=type)
+                tokens[value] = token
+
+            yield token
+
+    def _ctokenize(self, text, token_class=None):
+        """
+        Uses C instead of Python to tokenize the text.  For now the
+        C code is hand-optimized for the wikitext_split lexicon, and
+        must be modified by hand if the lexicon changes.
+
+        After calling Wikitext.init, Wikitext.next must be called with
+        the iterator until Wikitext.new returns a negative type_index.
+        Violating this assumption will cause a memory leak.
+
+        :Returns:
+            A `list` of tokens
+        """
+        token_class = token_class or Token
+        tokens = {}
+
+        iterator = Wikitext.init(text)
+
+        while True :
+            type_index, value = Wikitext.next(iterator)
+            if (type_index < 0):
+              break
+
+            try:
+                token = tokens[value]
+            except KeyError:
+                type = self.lexicon[type_index][0]
                 token = token_class(value, type=type)
                 tokens[value] = token
 

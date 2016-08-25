@@ -1,7 +1,15 @@
 import os
 
 from setuptools import find_packages, setup
+from distutils.core import setup, Extension
 
+wikitext = Extension('Wikitext',
+                     include_dirs = ['deltas/tokenizers'],
+                     sources = ['deltas/tokenizers/ctokenize/wikitext_split.c',
+                                'deltas/tokenizers/ctokenize/wikitext_split_create.c',
+                                'deltas/tokenizers/ctokenize/wikitext_split_tokenfuns.c',
+                                'deltas/tokenizers/ctokenize/iterator.c'
+                     ])
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -23,6 +31,7 @@ setup(
     packages=find_packages(),
     long_description = read('README.rst'),
     install_requires = ['yamlconf'],
+    ext_modules = [wikitext],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",

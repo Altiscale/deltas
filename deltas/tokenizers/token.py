@@ -1,5 +1,5 @@
 """
-Tokens represent chuncks of text that have semantic meaning.  A Token class that
+Tokens represent chunks of text that have semantic meaning.  A Token class that
 extends :class:`str` is provided.
 
 .. autoclass:: deltas.Token
